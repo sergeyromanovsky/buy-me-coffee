@@ -19,7 +19,7 @@ interface Web3ProviderProps {
 
 export function Web3Provider({ children }: Web3ProviderProps) {
   const [activeAccount, setActiveAccount] = useState<string>(
-    () => (isClient() && window.ethereum.selectedAddress) || ""
+    () => (isClient() && window.ethereum?.selectedAddress) || ""
   );
   const [contract, setContract] = useState<BuyMeACoffeeContract | null>(null);
 

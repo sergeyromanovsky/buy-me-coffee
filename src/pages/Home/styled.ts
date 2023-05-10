@@ -23,3 +23,8 @@ export const Form = styled.form`
   gap: 20px;
   width: clamp(250px, 40%, 600px);
 `;
+
+export const Link = styled.a`
+  display: block;
+  color: #6873f5;
+`;

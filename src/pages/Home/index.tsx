@@ -8,6 +8,7 @@ import Button from "components/Button";
 import Input from "components/FormControls/Input";
 import TextArea from "components/FormControls/TextArea";
 import * as Styled from "./styled";
+import { toast } from "react-toastify";
 
 export interface FormValues {
   name: string;
@@ -33,6 +34,14 @@ const Home = () => {
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
+
+      if (!ethereum) {
+        toast("You need to install MetaMask at first", {
+          type: "warning",
+          theme: "dark",
+          position: "top-center",
+        });
+      }
 
       if (ethereum.networkVersion !== GOERLI_CHAIN_ID.toString()) {
         const chainID = ethers.utils.hexValue(GOERLI_CHAIN_ID);
@@ -85,7 +94,21 @@ const Home = () => {
 
         await coffeeTxn?.wait();
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === "INSUFFICIENT_FUNDS") {
+        toast(
+          <>
+            You don&apos;t have enough ETH on your account, please total up your
+            account here
+            <Styled.Link href="https://goerlifaucet.com" target="_blank">
+              https://goerlifaucet.com
+            </Styled.Link>
+          </>,
+          { theme: "dark", position: "top-center", type: "error" }
+        );
+
+        return;
+      }
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -102,12 +125,12 @@ const Home = () => {
           <Input
             {...register("name", { required: "Required" })}
             error={errors.name}
-            label='Name'
+            label="Name"
           />
           <TextArea
             {...register("message", { required: "Required" })}
             error={errors.message}
-            label='Message'
+            label="Message"
           />
           <Button disabled={isLoading} onClick={onSubmit} type="submit">
             {isLoading ? <Loader /> : "Buy 1 Coffee for 0.001ETH"}
